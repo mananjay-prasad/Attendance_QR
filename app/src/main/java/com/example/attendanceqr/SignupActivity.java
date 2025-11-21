@@ -93,6 +93,13 @@ public class SignupActivity extends AppCompatActivity {
 
                 userRef.child(uid).setValue(map).addOnCompleteListener(task2 -> {
                     if (task2.isSuccessful()) {
+                        if ("student".equals(role)) {
+                            DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("Students");
+                            HashMap<String, Object> studentMap = new HashMap<>();
+                            studentMap.put("name", name);
+                            studentMap.put("email", email);
+                            studentRef.child(uid).setValue(studentMap);
+                        }
                         Toast.makeText(this, "Signup successful", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(this, MainActivity.class));
                         finish();

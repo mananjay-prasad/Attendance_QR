@@ -34,8 +34,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
     Button btnGenerateQR, btnLogout, btnViewAttendance;
     private Button selectDateButton, selectTimeButton, saveScheduleButton;
     private TextView selectedScheduleText;
-    private Calendar selectedDateTime = Calendar.getInstance();
+    private Calendar startDateTime = Calendar.getInstance();
+    private Calendar endDateTime = Calendar.getInstance();
     private DatabaseReference scheduleRef;
+    private boolean isSelectingStartTime = true;
 
 
     @Override
@@ -86,36 +88,62 @@ public class AdminDashboardActivity extends AppCompatActivity {
         scheduleRef = FirebaseDatabase.getInstance().getReference("AttendanceSchedule");
 
         selectDateButton.setOnClickListener(v -> {
+            isSelectingStartTime = true;
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                selectedDateTime.set(Calendar.YEAR, year);
-                selectedDateTime.set(Calendar.MONTH, month);
-                selectedDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateText();
-            }, selectedDateTime.get(Calendar.YEAR), selectedDateTime.get(Calendar.MONTH), selectedDateTime.get(Calendar.DAY_OF_MONTH));
+                startDateTime.set(Calendar.YEAR, year);
+                startDateTime.set(Calendar.MONTH, month);
+                startDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view1, hourOfDay, minute) -> {
+                    startDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    startDateTime.set(Calendar.MINUTE, minute);
+                    updateText();
+                }, startDateTime.get(Calendar.HOUR_OF_DAY), startDateTime.get(Calendar.MINUTE), false);
+                timePickerDialog.show();
+            }, startDateTime.get(Calendar.YEAR), startDateTime.get(Calendar.MONTH), startDateTime.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
 
         selectTimeButton.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
-                selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                selectedDateTime.set(Calendar.MINUTE, minute);
-                updateText();
-            }, selectedDateTime.get(Calendar.HOUR_OF_DAY), selectedDateTime.get(Calendar.MINUTE), false);
-            timePickerDialog.show();
+            isSelectingStartTime = false;
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+                endDateTime.set(Calendar.YEAR, year);
+                endDateTime.set(Calendar.MONTH, month);
+                endDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view1, hourOfDay, minute) -> {
+                    endDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    endDateTime.set(Calendar.MINUTE, minute);
+                    updateText();
+                }, endDateTime.get(Calendar.HOUR_OF_DAY), endDateTime.get(Calendar.MINUTE), false);
+                timePickerDialog.show();
+            }, endDateTime.get(Calendar.YEAR), endDateTime.get(Calendar.MONTH), endDateTime.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.show();
         });
 
         saveScheduleButton.setOnClickListener(v -> {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
-            String scheduleTime = sdf.format(selectedDateTime.getTime());
+            String startTime = sdf.format(startDateTime.getTime());
+            String endTime = sdf.format(endDateTime.getTime());
 
-            scheduleRef.setValue(scheduleTime).addOnSuccessListener(aVoid ->
-                    Toast.makeText(this, "Schedule saved: " + scheduleTime, Toast.LENGTH_SHORT).show()
+            if (startDateTime.after(endDateTime)) {
+                Toast.makeText(this, "End time must be after start time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            HashMap<String, String> scheduleMap = new HashMap<>();
+            scheduleMap.put("start", startTime);
+            scheduleMap.put("end", endTime);
+
+            scheduleRef.setValue(scheduleMap).addOnSuccessListener(aVoid ->
+                    Toast.makeText(this, "Schedule saved successfully", Toast.LENGTH_SHORT).show()
             );
         });
     }
     private void updateText() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
-        selectedScheduleText.setText("Selected: " + sdf.format(selectedDateTime.getTime()));
+        selectedScheduleText.setText("Start: " + sdf.format(startDateTime.getTime()) +
+                "\nEnd: " + sdf.format(endDateTime.getTime()));
     }
 
 }

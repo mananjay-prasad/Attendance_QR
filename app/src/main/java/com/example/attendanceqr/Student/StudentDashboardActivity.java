@@ -51,30 +51,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     private void checkAttendanceWindow() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("AttendanceStatus");
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Boolean isActive = snapshot.child("isActive").getValue(Boolean.class);
-                Long start = snapshot.child("startTime").getValue(Long.class);
-                Long end = snapshot.child("endTime").getValue(Long.class);
-                long now = System.currentTimeMillis();
-
-                if (isActive != null && isActive && start != null && end != null && now >= start && now <= end) {
-                    // ✅ Valid time — start QR scanner
-                    startActivity(new Intent(StudentDashboardActivity.this, ScanQRActivity.class));
-
-                } else {
-                    // ❌ Outside schedule
-                    Toast.makeText(StudentDashboardActivity.this, "Attendance window is not active!", Toast.LENGTH_SHORT).show();
-                    finish(); // optional: close activity
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+        startActivity(new Intent(StudentDashboardActivity.this, ScanQRActivity.class));
     }
 
 }

@@ -36,7 +36,8 @@ public class ScanQRActivity extends AppCompatActivity {
 
     private Button scanButton;
     private DatabaseReference scheduleRef;
-    private String scheduledTime = "";
+    private String startTime = "";
+    private String endTime = "";
 
 
     @Override
@@ -58,16 +59,10 @@ public class ScanQRActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    String startTime = snapshot.child("start").getValue(String.class);
-                    String endTime = snapshot.child("end").getValue(String.class);
+                    startTime = snapshot.child("start").getValue(String.class);
+                    endTime = snapshot.child("end").getValue(String.class);
 
-                    if (startTime != null && endTime != null) {
-                        if (isWithinScheduledTime(startTime, endTime)) {
-                            // Proceed to scan
-                        } else {
-                            Toast.makeText(ScanQRActivity.this, "Attendance not allowed at this time.", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
+                    if (startTime == null || endTime == null) {
                         Toast.makeText(ScanQRActivity.this, "Schedule not available", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -79,20 +74,19 @@ public class ScanQRActivity extends AppCompatActivity {
             }
         });
 
-        // Button click
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (scheduledTime.isEmpty()) {
+                if (startTime.isEmpty() || endTime.isEmpty()) {
                     Toast.makeText(ScanQRActivity.this, "Schedule not loaded yet", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-//                if (isWithinScheduledTime()) {
-//                    startQRScanner();
-//                } else {
-//                    Toast.makeText(ScanQRActivity.this, "Attendance not active now", Toast.LENGTH_SHORT).show();
-//                }
+                if (isWithinScheduledTime(startTime, endTime)) {
+                    startQRScanner();
+                } else {
+                    Toast.makeText(ScanQRActivity.this, "Attendance not active now", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -118,5 +112,44 @@ public class ScanQRActivity extends AppCompatActivity {
         integrator.setOrientationLocked(true);
         integrator.setBeepEnabled(true);
         integrator.initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Scan cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                String scannedData = result.getContents();
+                if ("college_xyz_attendance".equals(scannedData)) {
+                    markAttendance();
+                } else {
+                    Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void markAttendance() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        DatabaseReference attendanceRef = FirebaseDatabase.getInstance()
+                .getReference("Attendance")
+                .child(date)
+                .child(uid);
+
+        attendanceRef.child("time").setValue(time).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Attendance marked successfully!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to mark attendance", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
