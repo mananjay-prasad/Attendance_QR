@@ -1,0 +1,96 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@android:color/white"
+    android:id="@+id/main"
+    tools:context=".Admin.AdminDashboardActivity">
+
+    <TextView
+        android:text="Welcome, Admin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"/>
+
+    <Button
+        android:id="@+id/btnGenerateQR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Generate QR Code"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/btnViewAttendance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 View Attendance"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:drawablePadding="10dp" />
+
+    <Button
+        android:id="@+id/btnViewReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Attendance Report"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        />
+
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"/>
+
+    <!-- In admin_dashboard.xml -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Schedule Attendance"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/selectDateButton"
+            android:text="Select Date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/selectTimeButton"
+            android:text="Select Time"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/selectedScheduleText"
+            android:text="No schedule selected"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/saveScheduleButton"
+            android:text="Save Schedule"
+            android:layout_marginTop="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

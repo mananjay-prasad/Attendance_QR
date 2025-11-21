@@ -1,0 +1,63 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="24dp"
+    android:background="@android:color/white"
+    android:id="@+id/main"
+    tools:context=".Admin.GenerateQRActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:text="Admin QR Generator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <ImageView
+            android:id="@+id/imgQRCode"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="20dp"
+            android:background="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/tvGeneratedInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QR Code not generated yet"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btnGenerateQR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generate QR Code"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btnEnableQR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✅ Enable Attendance"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnDisableQR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⛔ Disable Attendance"
+            android:backgroundTint="#F44336"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

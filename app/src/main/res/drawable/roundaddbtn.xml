@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- First layer: Oval Shape -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#074F7A"/>
+        </shape>
+    </item>
+
+    <!-- Second layer: Vector Asset -->
+    <item>
+        <vector android:drawable="@drawable/ic_add" />
+    </item>
+</layer-list>
